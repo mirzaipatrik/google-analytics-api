@@ -16,7 +16,7 @@ const jwt = new google.auth.JWT(
         scopes
 );
 
-const startDate = new Date("2023-01-01");
+const startDate = new Date("2006-01-01");
 const endDate = new Date("2023-06-01");
 const dateRange = getDateRange(startDate, endDate, 30); // Assuming 30-day intervals
 
@@ -39,10 +39,10 @@ async function getViews() {
                                 "max-results": 10000, // Adjust as needed (maximum value: 10000)
                         });
                         response.data.rows.map(row => obj.data.push(({
-                                year: row[1],
-                                month: row[0],
+                                year: Number(row[1]),
+                                month: Number(row[0]),
                                 page: row[2],
-                                views: row[3]
+                                views: Number(row[3])
                         })))
                 }
 
