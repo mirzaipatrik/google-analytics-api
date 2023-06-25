@@ -16,9 +16,48 @@ const jwt = new google.auth.JWT(
         scopes
 );
 
-const startDate = new Date("2006-01-01");
-const endDate = new Date("2023-06-01");
-const dateRange = getDateRange(startDate, endDate, 30); // Assuming 30-day intervals
+function formatDate(date) {
+        console.log(date.toISOString().slice(0, 10))
+        return date.toISOString().slice(0, 10);
+}
+
+const dateRangeGenerator = (startYear, endYear) => {
+        let arrayContainingYears = [];
+        for (let i = startYear; i < endYear + 1; i++) {
+                arrayContainingYears.push(i);
+        }
+        return arrayContainingYears;
+};
+
+const listOfYears = dateRangeGenerator(2006, 2023);
+
+function getDateRange() {
+        const dateRange = [];
+        const daysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const today = new Date();
+
+        for (const year of listOfYears) {
+                for (const [monthIndex, days] of daysPerMonth.entries()) {
+                        const startDate = new Date(Date.UTC(year, monthIndex, 1));
+                        const endDate = new Date(Date.UTC(year, monthIndex, days));
+
+                        if (endDate > today) {
+                                // Break the loop if endDate is greater than today's date
+                                break;
+                        }
+
+                        dateRange.push({
+                                start: startDate,
+                                end: endDate,
+                        });
+                }
+        }
+
+        return dateRange;
+}
+
+const dateRange = getDateRange();
+
 
 async function getViews() {
         try {
@@ -53,24 +92,6 @@ async function getViews() {
         } catch (err) {
                 console.log(err);
         }
-}
-
-function getDateRange(startDate, endDate, intervalDays) {
-        const dateRange = [];
-        let currentDate = new Date(startDate);
-
-        while (currentDate <= endDate) {
-                const nextDate = new Date(currentDate);
-                nextDate.setDate(currentDate.getDate() + intervalDays);
-                dateRange.push({ start: new Date(currentDate), end: new Date(nextDate) });
-                currentDate = nextDate;
-        }
-
-        return dateRange;
-}
-
-function formatDate(date) {
-        return date.toISOString().slice(0, 10);
 }
 
 (async () => {
